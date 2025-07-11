@@ -40,3 +40,32 @@ The UKESM output is in _mass_ mixing ratio, so a conversion is neeeded to
 _molar_ mixing ratio to compare to this.
 Also the levels will not be the same -- we could average or sum over levels
 initially to get something comparable.
+
+### BodekerScientific_Total_Column_Ozone
+
+From `ncdump -h` this has:
+```
+dimensions:
+        latitude = 180 ;
+        longitude = 288 ;
+        time = UNLIMITED ; // (12 currently)
+...
+    tco:units = "DU" ;
+    tco:long_name = "Total column ozone" ;
+```
+DU means Dobson Units, an absolute measure of the total quantity in the
+column per unit area (from ground level to space).
+
+### OMI_MLS_Tropospheric_Ozone_Column
+
+This has: 
+```
+dimensions:
+        longitude = 288 ;
+        latitude = 120 ;
+        t = 183 ;
+    ...
+    ozone_column:units = "DU" ;
+```
+So again we will have to convert from mass mixing ratio in the model
+output to compare with this dataset.
