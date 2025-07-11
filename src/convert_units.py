@@ -19,7 +19,7 @@ def main(args):
 
     # Build up version of data in new units. Doesn't seem to work using
     # arithmetic operators directly with cube objects, so going for underlying
-    # data arrays instead. Start with copy (or is it a reference?)
+    # data arrays instead. Starting with an alias (so will trash original)
     O3_mass_cube_kg_cell = O3_MMR_cube_proportion
 
     # Convert from mass mixing ratio (unitless) to mass per model cell (kg)
@@ -36,8 +36,11 @@ def main(args):
     O3_mass_cube_kg_m2 = O3_mass_cube_kg_column / cell_areas_m2
 
     # Convert from mass to a volume at standard temperature and pressure
-    standard_T_K = (273.15 + 25)
-    standard_p_Pa = 101325
+    # https://en.wikipedia.org/wiki/Standard_temperature_and_pressure
+    # "Since 1982, STP has been defined as a temperature of 273.15 K 
+    #  (0 °C, 32 °F) and an absolute pressure of exactly 1 bar (100 kPa, 10^5 Pa)."
+    standard_T_K = 273.15
+    standard_p_Pa = 1e5
     molar_gas_const_J_K_mol = 8.314
     molar_mass_O3_g_mol = 3 * 16.0 # Approx from molecular formula
     molar_mass_O3_kg_mol = molar_mass_O3_g_mol * 1e-3
@@ -55,6 +58,10 @@ def main(args):
     # We should get values of about 300 (i.e. 3 mm or 0.003 m) according to:
     # https://en.wikipedia.org/wiki/Dobson_unit
     volume_column_DU = volume_column_m3_per_m2 * 1e5
+    volume_column_DU.units = "DU"
+    #volume_column_DU.name = "O3"
+    volume_column_DU.long_name = "Total ozone column"
+    
 
     print(f"Writing output to {args.output_file}")
     iris.save(volume_column_DU, args.output_file)
