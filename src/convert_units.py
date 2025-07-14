@@ -16,11 +16,16 @@ def main(args):
     air_mass_cube_kg_cell = get_cube_by_longname_fragment(cubelist, "AIR MASS DIAGNOSTIC (WHOLE")
 
     O3_MMR_cube_proportion = get_cube_by_longname_fragment(cubelist, "O3")
-
+        
     # Build up version of data in new units. Doesn't seem to work using
     # arithmetic operators directly with cube objects, so going for underlying
     # data arrays instead. Starting with an alias (so will trash original)
     O3_mass_cube_kg_cell = O3_MMR_cube_proportion
+
+    if args.tropo_only:
+        # Mask out stratosphere as we have been asked to do so
+        tropo_mask_cube = get_cube_by_longname_fragment(cubelist, "MASK")
+        O3_mass_cube_kg_cell.data *= tropo_mask_cube.data
 
     # Convert from mass mixing ratio (unitless) to mass per model cell (kg)
     O3_mass_cube_kg_cell.data *= air_mass_cube_kg_cell.data
@@ -59,8 +64,7 @@ def main(args):
     # https://en.wikipedia.org/wiki/Dobson_unit
     volume_column_DU = volume_column_m3_per_m2 * 1e5
     volume_column_DU.units = "DU"
-    #volume_column_DU.name = "O3"
-    volume_column_DU.long_name = "Total ozone column"
+    volume_column_DU.long_name = "Troposphere-only ozone column" if args.tropo_only else "Total ozone column"
     
 
     print(f"Writing output to {args.output_file}")
@@ -97,6 +101,10 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output-file",
                         required=True,
                         help="Transformed output file")
+    parser.add_argument("-t", "--tropo-only",
+                        action=argparse.BooleanOptionalAction,
+                        default=False,
+                        help="Apply troposphere-only mask")
     parser.add_argument("-f", "--format",
                         default="DU",
                         help="Units to convert to")

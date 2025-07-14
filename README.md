@@ -21,6 +21,10 @@ separately as it is too large for GitHub.
 We also have some observational datasets which some more detailed
 notes about will be added below.
 
+Final note: we only got as far as converting ozone mass mixing ratio
+to Dobson Units for comparison with two of the satellite datasets.
+See also 2025_07_11_ICCS_UKESM_eval_HackathonPresentation.odp
+for final group presentation.
 
 
 ## Observational datasets
